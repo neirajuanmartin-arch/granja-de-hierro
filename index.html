@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Granja de Hierro Automática — 2B Técnica</title>
+<style>
+  :root {
+    --bg: #f4f6f0;
+    --surface: #ffffff;
+    --surface2: #eef0e8;
+    --border: #c8cfc0;
+    --text: #1a1f14;
+    --muted: #5a6352;
+    --accent: #5a8a2e;
+    --accent2: #7c6d3a;
+    --iron: #8a8e94;
+    --dark: #1e2318;
+    --header-bg: #1e2318;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--header-bg);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px 24px 0;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .header-text h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e8eee0;
+  }
+  .header-text p {
+    font-size: 0.78rem;
+    color: #8a9a7a;
+    margin-top: 2px;
+  }
+  nav {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button {
+    background: none;
+    border: none;
+    color: #8a9a7a;
+    padding: 10px 15px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  nav button:hover { color: #c8e0a0; }
+  nav button.active { color: #a8d870; border-bottom-color: #5a8a2e; }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    background: var(--dark);
+    color: #e8eee0;
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,transparent,transparent 15px,rgba(255,255,255,0.018) 15px,rgba(255,255,255,0.018) 16px),
+                repeating-linear-gradient(90deg,transparent,transparent 15px,rgba(255,255,255,0.018) 15px,rgba(255,255,255,0.018) 16px);
+    pointer-events: none;
+  }
+  .page-hero h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; position: relative; }
+  .page-hero p { color: #8a9a7a; font-size: 0.88rem; position: relative; }
+  .hero-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  .card h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 .tag {
+    font-size: 0.68rem;
+    background: #fef3cd;
+    color: #7c5c00;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .card p, .card li { color: #3a4030; font-size: 0.9rem; }
+  .card ul { padding-left: 20px; }
+  .card ul li { margin-bottom: 6px; }
+
+  /* ── GRID ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 580px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* ── TEAM ── */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+  .team-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .team-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 6px;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+  }
+  .team-card h4 { font-size: 0.88rem; font-weight: 700; }
+  .team-card p { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── INFOBOX ── */
+  .infobox {
+    border-left: 4px solid var(--accent);
+    background: #f0f5e8;
+    border-radius: 0 6px 6px 0;
+    padding: 13px 16px;
+    margin-bottom: 16px;
+    font-size: 0.87rem;
+    color: #2e3a22;
+  }
+  .infobox.warn { background: #fdf6e3; border-left-color: var(--accent2); color: #3d3010; }
+  .infobox.iron { background: #f0f1f3; border-left-color: var(--iron); color: #2a2d32; }
+
+  /* ── SUBTABS (anteproyecto) ── */
+  .subtabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .subtab {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: all 0.12s;
+  }
+  .subtab:hover { background: #dde5d0; color: var(--text); }
+  .subtab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .subsection { display: none; }
+  .subsection.active { display: block; }
+
+  /* ── CALENDAR ── */
+  .cal-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+  .calendar-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  .calendar-table th {
+    background: var(--dark);
+    color: #8a9a7a;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .calendar-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .calendar-table tr:last-child td { border-bottom: none; }
+  .calendar-table tr:nth-child(even) td { background: var(--surface2); }
+  .etapa-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .etapa-planif    { background:#e3f0ff; color:#1a5ca8; }
+  .etapa-ante      { background:#fef3cd; color:#7c5c00; }
+  .etapa-circuito  { background:#e8f5e8; color:#2e6b2e; }
+  .etapa-proto     { background:#f3e8ff; color:#5e2c8a; }
+  .etapa-entrega   { background:#fff0e8; color:#8a3010; }
+  .etapa-pendiente { background:#f0f0f0; color:#666; }
+
+  /* ── STATUS CHIP ── */
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.77rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .s-ok  { background: #e8f5e8; color: #2e6b2e; }
+  .s-wip { background: #fef3cd; color: #7c5c00; }
+  .s-pend{ background: #f0f0f0; color: #666; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .d-ok   { background: #4caf50; }
+  .d-wip  { background: #f5a623; }
+  .d-pend { background: #aaa; }
+
+  /* ── MEDIA PLACEHOLDER ── */
+  .media-ph {
+    background: var(--surface2);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.84rem;
+    margin-bottom: 20px;
+  }
+  .media-ph .ico { font-size: 2rem; display: block; margin-bottom: 8px; }
+  .media-ph strong { display: block; color: var(--text); margin-bottom: 4px; }
+
+  /* ── CORRECTIONS ── */
+  .corr-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .corr-item:last-child { border-bottom: none; }
+  .corr-num {
+    width: 32px; height: 32px;
+    background: var(--accent2);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .corr-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+  .corr-body p { font-size: 0.84rem; color: var(--muted); }
+  .corr-date { font-size: 0.72rem; color: var(--iron); margin-top: 4px; }
+
+  footer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding: 22px 24px;
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <!-- Minecraft Iron Block icon (SVG) -->
+      <svg width="42" height="42" viewBox="0 0 42 42" fill="none" style="flex-shrink:0;">
+        <rect width="42" height="42" rx="4" fill="#4a5055"/>
+        <rect x="3" y="3" width="16" height="16" fill="#7a7e84"/>
+        <rect x="23" y="3" width="16" height="16" fill="#7a7e84"/>
+        <rect x="3" y="23" width="16" height="16" fill="#7a7e84"/>
+        <rect x="23" y="23" width="16" height="16" fill="#7a7e84"/>
+        <rect x="6"  y="6"  width="5" height="5" fill="#5a5e64"/>
+        <rect x="14" y="6"  width="5" height="5" fill="#5a5e64"/>
+        <rect x="26" y="6"  width="5" height="5" fill="#5a5e64"/>
+        <rect x="34" y="6"  width="5" height="5" fill="#5a5e64"/>
+        <rect x="6"  y="26" width="5" height="5" fill="#5a5e64"/>
+        <rect x="14" y="26" width="5" height="5" fill="#5a5e64"/>
+        <rect x="26" y="26" width="5" height="5" fill="#5a5e64"/>
+        <rect x="34" y="26" width="5" height="5" fill="#5a5e64"/>
+        <rect x="10" y="10" width="3" height="3" fill="#9a9ea4"/>
+        <rect x="10" y="30" width="3" height="3" fill="#9a9ea4"/>
+        <rect x="30" y="10" width="3" height="3" fill="#9a9ea4"/>
+        <rect x="30" y="30" width="3" height="3" fill="#9a9ea4"/>
+      </svg>
+      <div class="header-text">
+        <h1>Granja de Hierro Automática</h1>
+        <p>2B Técnica &nbsp;·&nbsp; Proyecto Fin de Año &nbsp;·&nbsp; Taller</p>
+      </div>
+    </div>
+    <nav id="main-nav">
+      <button class="active" onclick="showPage('inicio',this)">Inicio</button>
+      <button onclick="showPage('anteproyecto',this)">Anteproyecto</button>
+      <button onclick="showPage('circuito',this)">Circuito</button>
+      <button onclick="showPage('protoboard',this)">Protoboard</button>
+      <button onclick="showPage('entrega',this)">Entrega Final</button>
+      <button onclick="showPage('correcciones',this)">Correcciones</button>
+      <button onclick="showPage('calendario',this)">Calendario</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════ INICIO ═══════════════════════════ -->
+<div class="page active" id="page-inicio">
+  <div class="page-hero">
+    <span class="hero-badge">Proyecto Fin de Año</span>
+    <h2>Granja de Hierro Automática</h2>
+    <p>Diseño, construcción y documentación de una granja de hierro inspirada en Minecraft &nbsp;·&nbsp; Taller &nbsp;·&nbsp; 2B Técnica</p>
+  </div>
+
+  <div class="card">
+    <h3>¿Qué es este proyecto?</h3>
+    <p>Una granja de hierro automática es una construcción que genera lingotes de hierro de forma autónoma, sin intervención manual. En Minecraft, se basa en controlar el spawn de Golems de Hierro para obtener hierro de forma continua. En este proyecto trasladamos ese concepto al mundo real: analizamos su mecánica, diseñamos el circuito electrónico equivalente y lo probamos en una protoboard.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Objetivos</h3>
+      <ul>
+        <li>Entender la automatización de procesos</li>
+        <li>Diseñar un circuito electrónico funcional</li>
+        <li>Armar y probar el circuito en protoboard</li>
+        <li>Documentar todas las etapas del proyecto</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Datos del proyecto</h3>
+      <ul>
+        <li><strong>Materia:</strong> Taller</li>
+        <li><strong>Curso:</strong> 2° B Técnica</li>
+        <li><strong>Tipo:</strong> Proyecto Fin de Año</li>
+        <li><strong>Temática:</strong> Minecraft — Automatización</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Equipo</h3>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar" style="background:#5a8a2e;">JO</div>
+        <h4>OCAMPO, Julián</h4>
+        <p>Integrante</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:#2e6ba8;">LL</div>
+        <h4>LÓPEZ, Lorenzo</h4>
+        <p>Integrante</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:#7c6d3a;">JN</div>
+        <h4>NEIRA, Juan Martín</h4>
+        <p>Integrante</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background:#6a4a8a;">NM</div>
+        <h4>MEYER, Nicolás</h4>
+        <p>Integrante</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ANTEPROYECTO ═══════════════════════════ -->
+<div class="page" id="page-anteproyecto">
+  <div class="page-hero">
+    <span class="hero-badge">Sección 2</span>
+    <h2>Anteproyecto</h2>
+    <p>Planificación, investigación y definición del proyecto antes de comenzar la construcción</p>
+  </div>
+
+  <div class="subtabs">
+    <button class="subtab active" onclick="showSub(this,'sub-desc')">Descripción</button>
+    <button class="subtab" onclick="showSub(this,'sub-mec')">Mecánica</button>
+    <button class="subtab" onclick="showSub(this,'sub-mat')">Materiales</button>
+    <button class="subtab" onclick="showSub(this,'sub-fund')">Fundamentación</button>
+  </div>
+
+  <div class="subsection active" id="sub-desc">
+    <div class="card">
+      <h3>Descripción del proyecto</h3>
+      <p>El proyecto consiste en diseñar y construir una representación funcional de una granja de hierro automática inspirada en Minecraft. El objetivo es mostrar cómo los conceptos de automatización y lógica del juego pueden trasladarse a circuitos electrónicos reales.</p>
+      <br>
+      <p>Se trabaja en tres etapas principales: diseño del circuito esquemático, armado en protoboard y documentación del proceso completo.</p>
+    </div>
+    <div class="infobox">Subí acá el boceto inicial del proyecto o el primer diagrama que dibujaron a mano.</div>
+    <div class="media-ph">
+      <span class="ico">🖼️</span>
+      <strong>Boceto inicial del proyecto</strong>
+      Foto del primer esquema dibujado a mano
+    </div>
+  </div>
+
+  <div class="subsection" id="sub-mec">
+    <div class="card">
+      <h3>Mecánica de la granja en Minecraft</h3>
+      <p>En Minecraft, una granja de hierro explota el mecanismo de spawn de Golems de Hierro. Cuando una aldea tiene suficientes aldeanos y camas, aparecen golems automáticamente. Al eliminarlos, sueltan entre 3 y 5 lingotes de hierro. El proceso automatizado incluye:</p>
+      <br>
+      <ul>
+        <li><strong>Área de spawn:</strong> Plataformas donde aparecen los golems, separadas del suelo para evitar spawns no deseados.</li>
+        <li><strong>Sistema de eliminación:</strong> Lava con temporizador para matar los golems automáticamente.</li>
+        <li><strong>Recolección:</strong> Corrientes de agua que llevan los drops hacia cofres con tolvas.</li>
+        <li><strong>Control de aldeanos:</strong> Camas y mesas de trabajo para mantener activa la mecánica.</li>
+      </ul>
+    </div>
+    <div class="infobox warn">Podés agregar capturas del juego mostrando cada parte de la mecánica explicada arriba.</div>
+    <div class="media-ph">
+      <span class="ico">🎮</span>
+      <strong>Screenshot / Video de la mecánica</strong>
+      Captura mostrando cómo funciona la granja en Minecraft
+    </div>
+  </div>
+
+  <div class="subsection" id="sub-mat">
+    <div class="card">
+      <h3>Materiales necesarios</h3>
+      <div class="grid2">
+        <div>
+          <p style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:10px;">Componentes electrónicos</p>
+          <ul>
+            <li>Protoboard</li>
+            <li>Resistencias (varios valores)</li>
+            <li>LEDs (colores a definir)</li>
+            <li>Transistores NPN</li>
+            <li>Capacitores electrolíticos</li>
+            <li>Cables para puentes</li>
+            <li>Batería 9V + conector</li>
+            <li>Temporizador NE555 (si aplica)</li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:10px;">Herramientas y software</p>
+          <ul>
+            <li>Multímetro</li>
+            <li>Pinzas y cortacables</li>
+            <li>Tinkercad / Proteus (simulación)</li>
+            <li>Cámara para documentar</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="infobox iron">Completá esta lista con los valores y cantidades exactas que usaron.</div>
+  </div>
+
+  <div class="subsection" id="sub-fund">
+    <div class="card">
+      <h3>Fundamentación</h3>
+      <p>La elección de este proyecto se basa en la temática de Minecraft, que permite conectar el trabajo con algo cotidiano y atractivo para el grupo. La granja de hierro, en particular, involucra conceptos de automatización y lógica que tienen una representación directa en la electrónica real.</p>
+      <br>
+      <p>Desde el punto de vista pedagógico, el proyecto permite aplicar conceptos de circuitos eléctricos, temporizadores y sistemas de control vistos durante el año de forma práctica y concreta.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CIRCUITO ═══════════════════════════ -->
+<div class="page" id="page-circuito">
+  <div class="page-hero">
+    <span class="hero-badge">Sección 3</span>
+    <h2>Circuito Esquemático</h2>
+    <p>Diagrama y explicación del circuito electrónico diseñado para el proyecto</p>
+  </div>
+
+  <div class="infobox">Subí el circuito esquemático que diseñaron (Tinkercad, Proteus, o dibujado a mano). Explicá cada componente y su función.</div>
+
+  <div class="media-ph">
+    <span class="ico">⚡</span>
+    <strong>Diagrama del circuito esquemático</strong>
+    Imagen exportada desde Tinkercad, Proteus u otro software de simulación
+  </div>
+
+  <div class="card">
+    <h3>Descripción del circuito <span class="tag">Completar</span></h3>
+    <p>Describí cómo funciona el circuito: qué hace cada componente, cómo están conectados y cómo representa la automatización de la granja.</p>
+    <br>
+    <ul>
+      <li><strong>Bloque de control:</strong> [describir]</li>
+      <li><strong>Bloque de salida:</strong> [describir]</li>
+      <li><strong>Fuente de alimentación:</strong> [describir]</li>
+    </ul>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Componentes principales</h3>
+      <ul>
+        <li>[Componente 1] — función</li>
+        <li>[Componente 2] — función</li>
+        <li>[Componente 3] — función</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Valores calculados</h3>
+      <ul>
+        <li>Resistencia base: [valor] Ω</li>
+        <li>Tensión de alimentación: [V]</li>
+        <li>Corriente de LED: [mA]</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="media-ph">
+    <span class="ico">🎬</span>
+    <strong>Video de simulación (opcional)</strong>
+    Clip del circuito funcionando en simulador
+  </div>
+</div>
+
+<!-- ═══════════════════════════ PROTOBOARD ═══════════════════════════ -->
+<div class="page" id="page-protoboard">
+  <div class="page-hero">
+    <span class="hero-badge">Sección 4</span>
+    <h2>Prueba en Protoboard</h2>
+    <p>Armado físico del circuito y registro del proceso de prueba</p>
+  </div>
+
+  <span class="status-chip s-wip"><span class="dot d-wip"></span> En progreso</span>
+
+  <div class="infobox">Documentá el proceso de armado: fotos del paso a paso, problemas que surgieron y cómo los resolvieron.</div>
+
+  <div class="grid2">
+    <div class="media-ph">
+      <span class="ico">📸</span>
+      <strong>Foto — Armado inicial</strong>
+      Foto del circuito en protoboard antes de encender
+    </div>
+    <div class="media-ph">
+      <span class="ico">📸</span>
+      <strong>Foto — Circuito funcionando</strong>
+      Foto o video del circuito en funcionamiento
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Registro de pruebas <span class="tag">Completar</span></h3>
+    <ul>
+      <li><strong>Prueba 1 — Fecha:</strong> [resultado]</li>
+      <li><strong>Prueba 2 — Fecha:</strong> [resultado]</li>
+      <li><strong>Problemas encontrados:</strong> [descripción]</li>
+      <li><strong>Soluciones aplicadas:</strong> [descripción]</li>
+    </ul>
+  </div>
+
+  <div class="media-ph">
+    <span class="ico">🎬</span>
+    <strong>Video de funcionamiento</strong>
+    Video mostrando el circuito en protoboard encendido y funcionando
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ENTREGA FINAL ═══════════════════════════ -->
+<div class="page" id="page-entrega">
+  <div class="page-hero">
+    <span class="hero-badge">Sección 5</span>
+    <h2>Entrega Final</h2>
+    <p>Resultado completo del proyecto, conclusiones y material de presentación</p>
+  </div>
+
+  <span class="status-chip s-pend"><span class="dot d-pend"></span> Pendiente</span>
+
+  <div class="grid2">
+    <div class="media-ph">
+      <span class="ico">🏆</span>
+      <strong>Foto del proyecto terminado</strong>
+      Foto final del armado completo
+    </div>
+    <div class="media-ph">
+      <span class="ico">🎬</span>
+      <strong>Video de presentación</strong>
+      Video presentando el proyecto terminado
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Conclusiones <span class="tag">Completar</span></h3>
+    <p>¿Qué aprendieron? ¿El circuito funcionó como esperaban? ¿Qué cambiarían si lo hicieran de nuevo?</p>
+  </div>
+
+  <div class="card">
+    <h3>Reflexión del equipo <span class="tag">Completar</span></h3>
+    <div class="grid2">
+      <div>
+        <p style="font-size:0.88rem;font-weight:700;margin-bottom:4px;">Ocampo, Julián</p>
+        <p style="font-size:0.84rem;color:var(--muted);">[Reflexión personal]</p>
+      </div>
+      <div>
+        <p style="font-size:0.88rem;font-weight:700;margin-bottom:4px;">López, Lorenzo</p>
+        <p style="font-size:0.84rem;color:var(--muted);">[Reflexión personal]</p>
+      </div>
+      <div>
+        <p style="font-size:0.88rem;font-weight:700;margin-bottom:4px;">Neira, Juan Martín</p>
+        <p style="font-size:0.84rem;color:var(--muted);">[Reflexión personal]</p>
+      </div>
+      <div>
+        <p style="font-size:0.88rem;font-weight:700;margin-bottom:4px;">Meyer, Nicolás</p>
+        <p style="font-size:0.84rem;color:var(--muted);">[Reflexión personal]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CORRECCIONES ═══════════════════════════ -->
+<div class="page" id="page-correcciones">
+  <div class="page-hero">
+    <span class="hero-badge">Sección 6</span>
+    <h2>Correcciones</h2>
+    <p>Registro de las correcciones recibidas por el docente y las mejoras aplicadas</p>
+  </div>
+
+  <div class="infobox warn">Cada vez que el profe haga una corrección, anotala acá: fecha, qué señaló y qué hicieron para resolverlo.</div>
+
+  <div class="card">
+    <div class="corr-item">
+      <div class="corr-num">1</div>
+      <div class="corr-body">
+        <h4>Corrección 1 — [Título de la corrección]</h4>
+        <p>Descripción de lo que observó el docente y qué había que mejorar o corregir.</p>
+        <p class="corr-date">Fecha: [dd/mm/aaaa] &nbsp;·&nbsp; Estado: <strong style="color:#f5a623;">En revisión</strong></p>
+      </div>
+    </div>
+    <div class="corr-item">
+      <div class="corr-num">2</div>
+      <div class="corr-body">
+        <h4>Corrección 2 — [Título de la corrección]</h4>
+        <p>Descripción del problema encontrado y los cambios realizados para resolverlo.</p>
+        <p class="corr-date">Fecha: [dd/mm/aaaa] &nbsp;·&nbsp; Estado: <strong style="color:#4caf50;">Resuelta</strong></p>
+      </div>
+    </div>
+    <div class="corr-item">
+      <div class="corr-num" style="background:var(--iron);">+</div>
+      <div class="corr-body">
+        <p style="color:var(--muted);font-style:italic;">Agregá más correcciones a medida que el profe las indique...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CALENDARIO ═══════════════════════════ -->
+<div class="page" id="page-calendario">
+  <div class="page-hero">
+    <span class="hero-badge">Sección 7</span>
+    <h2>Calendario del Proyecto</h2>
+    <p>Registro cronológico de lo trabajado en cada clase o día de proyecto</p>
+  </div>
+
+  <div class="infobox">Completá esta tabla cada vez que avancen. Anotá la fecha, la etapa y qué hicieron ese día.</div>
+
+  <div class="cal-wrap">
+    <table class="calendar-table">
+      <thead>
+        <tr>
+          <th style="width:105px;">Fecha</th>
+          <th style="width:145px;">Etapa</th>
+          <th>Actividad realizada</th>
+          <th style="width:110px;">Responsable(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-planif">Planificación</span></td>
+          <td>Elección del tema, formación del grupo y primera lluvia de ideas.</td>
+          <td>Todos</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-ante">Anteproyecto</span></td>
+          <td>Investigación sobre la mecánica de la granja de hierro en Minecraft.</td>
+          <td>Todos</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-ante">Anteproyecto</span></td>
+          <td>Redacción del anteproyecto: descripción, fundamentación y materiales.</td>
+          <td>Todos</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-circuito">Circuito</span></td>
+          <td>Diseño del circuito esquemático en [Tinkercad / Proteus / papel].</td>
+          <td>Ocampo, López</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-circuito">Circuito</span></td>
+          <td>Revisión y ajuste del circuito. Cálculo de valores de resistencias.</td>
+          <td>Neira, Meyer</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-proto">Protoboard</span></td>
+          <td>Primer armado del circuito en protoboard. Prueba inicial.</td>
+          <td>Todos</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-proto">Protoboard</span></td>
+          <td>Corrección de errores y segunda prueba de funcionamiento.</td>
+          <td>Todos</td>
+        </tr>
+        <tr>
+          <td>dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-entrega">Entrega Final</span></td>
+          <td>Preparación de la presentación final y armado del sitio web.</td>
+          <td>Todos</td>
+        </tr>
+        <tr>
+          <td style="color:var(--muted);">dd/mm/aaaa</td>
+          <td><span class="etapa-badge etapa-pendiente">Pendiente</span></td>
+          <td style="color:var(--muted);font-style:italic;">Completar con lo que vayan haciendo…</td>
+          <td style="color:var(--muted);">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <h3>Referencias de etapas</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <span class="etapa-badge etapa-planif">Planificación</span>
+      <span class="etapa-badge etapa-ante">Anteproyecto</span>
+      <span class="etapa-badge etapa-circuito">Circuito</span>
+      <span class="etapa-badge etapa-proto">Protoboard</span>
+      <span class="etapa-badge etapa-entrega">Entrega Final</span>
+      <span class="etapa-badge etapa-pendiente">Pendiente</span>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Granja de Hierro Automática &nbsp;·&nbsp; 2B Técnica &nbsp;·&nbsp; Proyecto Fin de Año — Taller<br>
+  Ocampo &nbsp;·&nbsp; López &nbsp;·&nbsp; Neira &nbsp;·&nbsp; Meyer<br><br>
+  <span style="opacity:0.5;">Made with IBM Bob</span>
+</footer>
+
+<script>
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showSub(btn, id) {
+  const page = btn.closest('.page');
+  page.querySelectorAll('.subtab').forEach(t => t.classList.remove('active'));
+  page.querySelectorAll('.subsection').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+</script>
+
+</body>
+</html>
